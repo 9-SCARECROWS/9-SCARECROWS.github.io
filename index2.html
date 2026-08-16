@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>----タイトル----</title>
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body id="page">
+
+<!-- ▼全体の囲み▼ -->
+<div id="wrapper">
+
+<!-- ▼ヘッダ▼ -->
+<header>
+<div id="header-inner">
+<!-- サイト名 -->
+<h1>SITE NAME</h1>
+ここにも文字書けます
+</div>
+</header><!-- ▲ヘッダ▲ -->
+
+<!-- ▼中央▼ -->
+<div id="contents" class="cf">
+
+<!-- ▼左側▼ -->
+<div id="leftcolumn">
+<div id="leftcolumn-inner">
+
+<!-- ▼メニュー▼ -->
+<div id="menu">
+<nav>
+<ul>
+
+<!-- インラインフレーム内に開く時はtarget="if" -->
+<li><a href="main.html" target="if">Top</a>
+<li><a href="link.html" target="if">Link</a>
+<li><a href="#">Illust</a>
+<li><a href="#">Novel</a>
+<li><a href="sample.html" target="if">sample01</a>
+<li><a href="sample02.html" target="if">sample02</a>
+</ul>
+</nav>
+</div>
+<!-- ▲メニュー▲ -->
+
+</div></div><!-- ▲左側▲ -->
+
+<!-- ▼右側▼ -->
+<div id="rightcolumn">
+<div class="if-container"><iframe src="main.html" name="if" title="iframe" class="ifrm"></iframe></div>
+</div><!-- ▲右側▲ -->
+
+</div><!-- ▲中央▲ -->
+
+<!-- ▼フッタ▼ -->
+<footer>
+<div id="footer-inner">
+<a href="http://foollovers.com" target="_blank" id="fl">designed</a>
+</div>
+</footer><!-- ▲フッタ▲ -->
+
+</div><!-- ▲全体の囲み▲ -->
+
+<!-- jquery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="js/jquery.height.js"></script>
+</body>
+</html>
