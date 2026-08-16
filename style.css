@@ -28,14 +28,14 @@ a{
 color:#900
 }
 a:hover{
-color:#ab9b82;
+color:#ffc835;
 transition:.6s
 }
 /*--------------------------------------------------------
 インラインフレーム外設定
 --------------------------------------------------------*/
 #page{
-color:#ab9b82;
+color:#ffc835;
 background:#000;
 height:100%;
 padding:0
@@ -85,7 +85,7 @@ text-align:right
 index
 --------------------------------------------------------*/
 #index{
-background:url(image/back01.gif);
+background:black;
 margin:20px auto
 }
 #indexbox{
@@ -146,7 +146,7 @@ z-index:2
 text-align:center
 }
 nav li a{
-color:#ab9b82;/* メニューの文字色 */
+color:#ffc835;/* メニューの文字色 */
 display:block;
 font-weight:700;
 font-size:1.3em;
@@ -176,7 +176,7 @@ margin:20px 0
 }
 h3,.h3{
 font-size:1.2em;
-border-bottom:1px dashed #ab9b82;
+border-bottom:1px dashed #ffc835;
 font-weight:400;
 margin:20px 0
 }
@@ -238,7 +238,7 @@ margin:5px 0;
 padding:3px
 }
 .textbox{
-border:1px #ab9b82 solid;
+border:1px #ffc835 solid;
 margin:10px 0;
 padding:3px;
 text-align:center
