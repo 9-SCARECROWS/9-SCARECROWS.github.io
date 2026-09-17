@@ -1,0 +1,4069 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" type="text/css" href="https://neopetsclassic.com/static/blog/main.96c4033bac90.css?v=33.5">
+  
+  
+  <link rel="preload" as="image" fetchpriority="high" href="https://neopetsclassic.com/static/images/misc/themes/default/m5.19f039a2acb1.gif">
+  
+  
+  
+  
+  <link rel="preload" as="image" fetchpriority="high" href="https://neopetsclassic.com/static/images/misc/themes/default/st.1b7b2f1020ff.png">
+  
+  
+  
+  
+  <link rel="preload" as="image" href="https://neopetsclassic.com/static/images/misc/themes/default/hdr_long.905073b728f6.gif">
+  
+  <script src="https://neopetsclassic.com/static/blog/jquery.min.a09e13ee94d5.js"></script>
+  <link rel="shortcut icon" href="https://neopetsclassic.com/static/images/favicon.44d52d483346.ico" type="image/x-icon">    
+  
+    <title>User Lookup - Neopets Classic</title>
+    
+  <script language=JavaScript><!--
+    var nl='en',nh=10,nm=45,ns=38,na='am',ncl=new Array(0,53,104,137,169,198,231,265,299,335,368,397,427),e=new Array(0,67,114,139,173,208,242,274,307,344,377,408,437);
+    function sh(i){ol.style.clip="rect("+ncl[i-1]+" 128 "+ncl[i]+" 0)";ol.style.visibility='visible'}
+    function sb(i){ol.style.clip="rect("+e[i-1]+" 130 "+e[i]+" 0)";ol.style.visibility='visible'}
+    function mo(){ol.style.visibility='hidden'};
+    //-->
+  </script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+  var SERVER_NOW_MS = parseInt("1788058444", 10) * 1000;
+  var CLOCK_OFFSET = SERVER_NOW_MS - Date.now();
+
+  var NOW_FLASH_MS = 10 * 1000;
+
+  var rs = {
+    target: SERVER_NOW_MS + ((parseInt("05", 10) || 0) * 60 + (parseInt("56", 10) || 0)) * 1000,
+    cycle: 6 * 60 * 1000,
+    span: ".nst_clock.rs_clock", label: "Next RS",
+    sec: "#rs_clock_seconds", min: "#rs_clock_minutes", saved: null
+  };
+  var jobs = {
+    target: SERVER_NOW_MS + ((parseInt("05", 10) || 0) * 60 + (parseInt("56", 10) || 0)) * 1000,
+    cycle: 10 * 60 * 1000,
+    span: ".nst_clock.jobs_clock", label: "New Jobs",
+    sec: "#jobs_clock_seconds", min: "#jobs_clock_minutes", saved: null
+  };
+  
+  var reTarget = SERVER_NOW_MS + Math.max(0, (parseInt("", 10) || 0) * 3600 + (parseInt("02", 10) || 0) * 60 + (parseInt("34", 10) || 0)) * 1000;
+
+  var NST_FMT = new Intl.DateTimeFormat("en-US", { timeZone: "America/Los_Angeles", hour12: true, hour: "numeric", minute: "2-digit", second: "2-digit" });
+
+  function serverNow() { return Date.now() + CLOCK_OFFSET; }
+  function pad(val) { return val.toString().padStart(2, "0"); }
+
+  function drawNST() {
+    var parts = NST_FMT.formatToParts(new Date(serverNow()));
+    var map = {};
+    parts.forEach(function(p) { map[p.type] = p.value; });
+    $("#NST_clock_hours").html(pad(map.hour));
+    $("#NST_clock_minutes").html(map.minute);
+    $("#NST_clock_seconds").html(map.second);
+    $(".NST_clock_ampm").html(map.dayPeriod || "");
+  }
+
+  function drawMinSec(c, remainMs) {
+    var total = Math.max(0, Math.floor(remainMs / 1000));
+    $(c.sec).html(pad(total % 60));
+    $(c.min).html(pad(Math.floor(total / 60) % 60));
+  }
+
+  function drawCyclic(c) {
+    var span = $(c.span);
+    if (!span.length) return;
+    var remain = c.target - serverNow();
+    if (remain > 0) {
+      if (c.saved === null) c.saved = span.html();
+      drawMinSec(c, remain);
+      return;
+    }
+    if (remain > -NOW_FLASH_MS || c.saved === null) {
+      span.html(c.label + " : <b>NOW!</b>");
+      return;
+    }
+    while (c.target <= serverNow()) c.target += c.cycle;
+    span.html(c.saved);
+    drawMinSec(c, c.target - serverNow());
+  }
+
+  function drawRE() {
+    var span = $(".nst_clock.next_random_clock");
+    if (!span.length || !$("#next_random_clock_seconds").length) return;
+    var remain = reTarget - serverNow();
+    if (remain <= 0) {
+      span.html("Next RE : <b>NOW!</b>");
+      return;
+    }
+    var total = Math.floor(remain / 1000);
+    if ($("#next_random_clock_hours").length) {
+      $("#next_random_clock_hours").html(pad(Math.floor(total / 3600)));
+      $("#next_random_clock_minutes").html(pad(Math.floor(total / 60) % 60));
+    } else {
+      $("#next_random_clock_minutes").html(pad(Math.floor(total / 60)));
+    }
+    $("#next_random_clock_seconds").html(pad(total % 60));
+  }
+
+  function tick() { drawNST(); drawCyclic(rs); drawCyclic(jobs); drawRE(); }
+  tick();
+  setInterval(tick, 1000);
+  document.addEventListener("visibilitychange", function() { if (!document.hidden) tick(); });
+  window.addEventListener("focus", tick);
+});
+</script>
+<style>
+div {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+div::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, and Opera */
+}
+div::-webkit-scrollbar-track {
+  background: transparent; /* color of the tracking area */
+}
+div::-webkit-scrollbar-thumb {
+  background-color: rgba(155, 155, 155, 0.7); /* color of the scroll thumb */
+  border-radius: 20px; /* roundness of the scroll thumb */
+  border: 3px solid transparent; /* creates padding around scroll thumb */
+}
+div:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(155, 155, 155, 0.7);
+}
+#content_td {
+  max-width: 728px;
+  vertical-align: top;
+}
+.footerText a {
+  font-weight: normal;
+}
+.sidebar-container {
+  position: relative;
+  min-height: 100%;
+  text-align: center;
+}
+
+.sidebar-section {
+  position: relative;
+  overflow: hidden;
+  padding-left: 45px;
+  padding-right: 15px;
+  width: 180px;
+  font-size: 8pt;
+  z-index: 1;
+}
+
+
+
+
+
+.sidebar-section.st {
+  background-image: url('/static/images/misc/themes/default/st.1b7b2f1020ff.png');
+  background-repeat: no-repeat;
+  padding-top: 15px;
+  min-height: 242px;
+}
+
+.sidebar-section.sm {
+  background-image: url('/static/images/misc/themes/default/sm.553b73e8388c.png');
+  background-repeat: repeat-y;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+.sidebar-section.se {
+  background-image: url('/static/images/misc/themes/default/se.cc12b5759c49.png');
+  background-repeat: no-repeat;
+  background-position: bottom left;
+  padding-bottom: 118px;
+}
+
+.sidebar-section.sm-filler {
+  background-image: url('/static/images/misc/themes/default/sm.553b73e8388c.png');
+  background-repeat: repeat-y;
+  position: absolute;
+  bottom: 117px;
+  left: 0;
+  right: 0;
+  top: 200;
+  z-index: 0;
+}
+
+
+
+
+</style>
+
+  
+</head>
+
+
+<body id="default_body">
+
+
+
+
+
+<form id="logout-form" method="post" action="/logout/" style="display:none;">
+  <input type="hidden" name="csrfmiddlewaretoken" value="mMRy9zfjkfjBDUi0d8akAUVtOxnTfvAGl23q56kKJFS45h9RUEvCjt9ySYv8yQMf">
+</form>
+
+<script>
+function submitLogout() {
+  document.getElementById('logout-form').submit();
+  return false;
+}
+</script>
+
+ <map name=a>
+  <area shape=rect coords="0,10,130,53" href="https://neopetsclassic.com/addpet/" onmouseover="sh(1)" alt="Create a Neopet">
+  <area shape=rect coords="0,53,130,104" href="https://neopetsclassic.com/petcentral/" onmouseover="sh(2)" alt="Pet Central">
+  <area shape=rect coords="0,104,130,137" href="https://neopetsclassic.com/explore/" onmouseover="sh(3)" alt="Explore">
+  <area shape=rect coords="0,137,130,169" href="https://neopetsclassic.com/gameroom/" onmouseover="sh(4)" alt="Games">
+  <area shape=rect coords="0,169,130,198" href="https://neopetsclassic.com/neomessages/" onmouseover="sh(5)" alt="Neomail">
+  <area shape=rect coords="0,198,130,231" href="https://neopetsclassic.com/objects/" onmouseover="sh(6)" alt="Shops">
+  <area shape=rect coords="0,231,130,265" href="https://neopetsclassic.com/neoboards/" onmouseover="sh(7)" alt="Neoboards">
+  <area shape=rect coords="0,265,130,299" href="https://neopetsclassic.com/nf/" onmouseover="sh(8)" alt="News">
+  <area shape=rect coords="0,299,130,335" href=/stuff.phtml onmouseover="sh(9)" alt="Stuff">
+  <area shape=rect coords="0,335,130,368" href="https://neopetsclassic.com/help/" onmouseover="sh(10)" alt="Help">
+  <area shape=rect coords="0,368,130,397" href="https://neopetsclassic.com/loginpage/" onmouseover="sh(11)" alt="Login">
+  <area shape=rect coords="0,397,130,427" href="#" onclick="return submitLogout();" onmouseover="sh(12)" alt="Logout">
+</map>
+<map name="b">
+  <area onmouseover="sb(1)" shape="RECT" alt="Pet Central" coords="0,1,130,67" href="https://neopetsclassic.com/petcentral/">
+  <area onmouseover="sb(2)" shape="RECT" alt="Create a Pet" coords="0,67,130,114" href="https://neopetsclassic.com/addpet/">
+  <area onmouseover="sb(3)" shape="RECT" alt="Neomail" coords="0,114,130,139" href="https://neopetsclassic.com/neomessages/">
+  <area onmouseover="sb(4)" shape="RECT" alt="World" coords="0,139,130,173" href="https://neopetsclassic.com/explore/">
+  <area onmouseover="sb(5)" shape="RECT" alt="Explore" coords="0,173,130,208" href="https://neopetsclassic.com/explore/">
+  <area onmouseover="sb(6)" shape="RECT" alt="Chat" coords="0,208,130,242" href="https://neopetsclassic.com/neoboards/">
+  <area onmouseover="sb(7)" shape="RECT" alt="Games" coords="0,242,130,274" href="https://neopetsclassic.com/gameroom/">
+  <area onmouseover="sb(8)" shape="RECT" alt="Shops" coords="0,274,130,307" href="https://neopetsclassic.com/objects/">
+  <area onmouseover="sb(9)" shape="RECT" alt="News" coords="0,307,130,344" href="https://neopetsclassic.com/nf/">
+  <area onmouseover="sb(10)" shape="RECT" alt="Help" coords="0,344,130,377" href="https://neopetsclassic.com/help/">
+  <area onmouseover="sb(11)" shape="RECT" alt="Login" coords="0,377,130,408" href="https://neopetsclassic.com/loginpage/">
+  <area onmouseover="sb(12)" shape="RECT" alt="Logout" coords="0,408,130,437" href="#" onclick="return submitLogout();">
+</map>
+<table cellpadding="0" cellspacing="0">
+  <tr>
+    <td id="content_td"> 
+      
+        <table id="hdr" cellspacing="0" cellpadding="0" background="https://neopetsclassic.com//static/images/misc/themes/default/hdr_long.905073b728f6.gif" height="44" width="728" border="0">
+      
+      
+      
+        <tr>
+          <td width="130">
+            <a href="https://neopetsclassic.com/">
+              <div style="height:34px;cursor:hand"></div>
+            </a>
+          </td>
+          <td align="right" valign="middle">
+            <table align="right" valign="middle" cellpadding="2">
+              <tr>
+                <td class="tt">
+                  
+                    <font id="default_nav">
+                      Welcome, <a href="https://neopetsclassic.com/userlookup/?user=9SCARECROWS">9SCARECROWS</a> |
+                      
+                        Pet : <a href="https://neopetsclassic.com/quickref/">Nine</a> |
+                      
+                      NP : <a href="https://neopetsclassic.com/inventory/">396,606</a>
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                        | <form method="post" action="/darkmode/toggle/" style="display:inline;"><input type="hidden" name="csrfmiddlewaretoken" value="mMRy9zfjkfjBDUi0d8akAUVtOxnTfvAGl23q56kKJFS45h9RUEvCjt9ySYv8yQMf"><button type="submit" style="border:none;background:none;padding:0;cursor:pointer;"><img src="https://neopetsclassic.com/static/images/misc/darkmode.74fa80f7f8eb.png" style="position: relative; top: 2px;" height="10px" title="Dark Mode"></button></form>
+                      
+                      
+                      
+                      
+                    </font>
+                  
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      
+      </td>
+      
+        <td width="10">
+      </tr>
+      <tr>
+        <td height="8">
+      </tr>
+      
+</table>
+<table cellpadding=0 cellspacing=0 border=0><tr>
+
+<td valign=top>
+<table cellpadding=0 cellspacing=0 border=0>
+<tr>
+<td width=128 valign=top class=navhover>
+<img id=ol fetchpriority="low" onmouseout="mo()" src="https://neopetsclassic.com/static/images/misc/themes/default/m5on.2b8c6439f585.gif" usemap=#a border=0>
+<img id="m" fetchpriority="high" decoding="async" src="https://neopetsclassic.com/static/images/misc/themes/default/m5.19f039a2acb1.gif" usemap=#a width=128 height=427 border=0><div>
+<table id=n bgcolor=#FFCE00 cellpadding=0 cellspacing=0 width=128>
+  <tr><td class=tl height=250 align=center><br>
+  <span id="nst_clock" class="nst_clock">
+    <span style="text-transform:lowercase;">
+      
+      <span id="NST_clock_hours">07</span>:<span id="NST_clock_minutes">54</span>:<span id="NST_clock_seconds">04</span>
+      <span class="NST_clock_ampm">PM</span>
+      
+    </span> 
+  NST
+  </span>
+  <br><br><br>
+  <form action="/search/" method=post>Search Neopets:
+    <input type="hidden" name="csrfmiddlewaretoken" value="mMRy9zfjkfjBDUi0d8akAUVtOxnTfvAGl23q56kKJFS45h9RUEvCjt9ySYv8yQMf">
+  <input type=text name=searchquery size=7>
+  <input type=submit value=Go! style="font-size:8pt"></form>
+  
+  <a href="https://neopetsclassic.com/games/game/?game_id=570"><img src="https://neopetsclassic.com/static/images/misc/sidebarbanners/570_1_v1.gif" width="120" height="60"></a><br><br>
+  <form action="/change_language/" method="post">
+  Select language:
+  <input type="hidden" name="csrfmiddlewaretoken" value="mMRy9zfjkfjBDUi0d8akAUVtOxnTfvAGl23q56kKJFS45h9RUEvCjt9ySYv8yQMf">
+  <input type="hidden" name="next" value="/userlookup/?user=9SCARECROWS">
+  <select name="lang" style="font-size:8pt">
+    <option value="en" selected>English</option>
+    <option value="nl" >Nederlands</option>
+    <option value="pt" >Português</option>
+    <option value="de" >Deutsch</option>
+    <option value="fr" >Français</option>
+    <option value="it" >Italiano</option>
+    <option value="es" >Español</option>
+    <option value="ch" >简体中文</option>
+    <option value="zh" >繁體中文</option>
+    <option value="ja" >日本語</option>
+    <option value="ko" >한국어</option>
+  </select>
+  <input type="submit" value="Go!" style="font-size:8pt">
+  </form>
+  </td></table>
+  </td><td width=2 bgcolor=black></td></tr>
+  </table>
+    <img id=mb src="https://neopetsclassic.com/static/images/misc/themes/default/1.48f3fa15db3d.gif" width=130 height=20 border="0">
+  </td>
+
+<script language=JavaScript>var ol = document.getElementById('ol');</script>
+<td style="padding:0px 5px 5px 10px;width:595" onmouseover="mo()" valign=top>
+  
+
+<table border=0 id="pagebanner">
+
+  <tr>
+    <td width=80>
+      
+      
+    </td>
+      
+      <td align=right>
+        <img src="https://neopetsclassic.com/static/images/banners/userlookup.41c965884cf7.gif" width=480 height=62 alt="View a User" class="hdr" id="rounded_banner">
+      
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+
+<style type="text/css">
+  .userLookupPet {
+    display: table-cell;
+    max-width: 150px;
+    width: 125px;
+  }
+</style>
+
+
+<style>
+.userlookupLink {
+padding: 10px !important;
+}
+</style>
+
+
+<div class="content">
+    
+    <div align="center" id="userHeader">
+      <br><br>
+      <font size="+1">
+      <b>
+      
+      User Lookup : 9SCARECROWS
+      
+      
+      </b></font>
+      
+    </div>
+    
+    <div id="center">
+    
+        
+            <div id="bioL">
+    hello, my name is <b>CAL</b> but you can also call me <b>NINE</b> . im a transsexual man, and i use <b>IT/ITS</b> pronouns. i coded this profile myself, as well as any coded pet lookups on any of my profiles <i>!</i>
+
+    <p>im a big HAUNTED MOUND fan, if you couldnt tell . a very large number of my pets are named after songs and albums from HM members, especially SEMATARY.</p>
+
+    <p><i>art on this page is by <a href="https://www.tumblr.com/boxheadpaint">boxheadpaint</a> on tumblr !</i></p>
+
+    <p style="margin:25px 0px;"><b>ONGOING PROJECT:</b> AMERICAN MCGEE'S ALICE PETS</p>
+
+    <div id="music">
+      <audio controls><source src="https://file.garden/ahZHVLJ5bxvHBg1m/NINE/9_SCARECROWS.wav"></audio>
+      <p><sub><i><b>NOW PLAYING:</b> 9 SCARECROWS — SEMATARY ft. ELUSIN</i></sub></p>
+    </div>
+</div>
+    
+<div id="bioR">
+    <img src="https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/esobaby_slice.png">
+</div>
+
+<img src="https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/esopoint_side.png" id="esophagor">
+
+<div id="goback"><a href="https://neopetsclassic.com/">click here to go back to neopets !</a></div>
+
+<style>
+#default_nav, #retro_nav, #pride_nav, #acp_nav, #bday_nav, #sfp_nav, #hw_nav, #mqa_nav, #hol_nav, #dark_nav, #val_nav, #activitiesManager, .hdr, #mb, .tl, .ol, #m, #tl, #tbody, hr, #m + div, .footerText {display:none;}
+#retroTopBar, .footerText, .hdr, #activitiesManager, #mb, .tl, .ol, #m, #tl, #tbody, hr, #m + div  {visibility:hidden;}
+#hdr {background:none;}
+* {
+  font-family: 'Times New Roman', Times, serif !important;
+}
+* a {
+  text-transform: uppercase;
+  color: red;
+  transition: all ease-in-out .25s;
+}
+* a:hover {
+  color: #198686;
+  letter-spacing: 0.45px;
+  transition: all ease-in-out .25s;
+}
+body {
+  background: #1b5050;
+  background-image: url("https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/bg_black.png"), url("https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/hw_bgF2.png");
+  background-size: auto, cover;
+  background-attachment: fixed;
+  background-position: bottom right, top left;
+  background-repeat: repeat-x, no-repeat;
+}
+body, .content, .content p, #userInfo {
+  font-size: 10.35pt;
+}
+#goback {
+  position: absolute;
+  top: 7px;
+  font-style: italic;
+  letter-spacing: 0.5;
+  width: 750px;
+  height: 20px;
+}
+#goback a:hover {
+  font-style: italic;
+  color: #5cd2be;
+  letter-spacing: 1px;
+}
+
+.content {
+  background: white;
+  background-repeat: no-repeat;
+  background-image: url("https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/lovebirds_ukDHhOX.png"), url("https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/piggyback.png"), url("https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/butttree_8qPBCWn.png"), url("https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/bigtree_Zr1MBuF.png"), url("https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/slashfic_8TBI73F.png"), url("https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/thatsfine_uss0FlC.png");
+  background-position: top 4px left 8px, top 10px right 3px, top 150px left 255px, top 420px left -185px, bottom 980px right 69px, bottom 680px left 5px;
+  background-size: auto;
+  width: 750px  !important;
+  padding: 7px;
+  margin: 0px;
+  margin-top: -17px !important;
+  margin-left: 25px !important;
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  border: 3px double black;
+  outline: 1px dotted black;
+}
+#userHeader{
+  order: 1;
+  height: 62px;
+  background-image: url("https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/9SC_header.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  color: transparent;
+  content: url();
+}
+#userInfo {
+  width: 420px !important;
+  padding: 0;
+}
+#userShield {
+  background-image: url("https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/yuckdinner_trans.png");
+  background-position: center right;
+  background-repeat: no-repeat;
+  padding: 0;
+  padding-bottom: 40px;
+}
+.content > p:nth-child(3){order: 2;}
+#center {
+  order: 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 7px 0px 7px;
+  margin: 0px -7px;
+  background-image: url("https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/yucky_div_repeat.png");
+  background-repeat: repeat-x;
+  background-position: top;
+}
+#bioL {
+  margin-right: 5px;
+  text-align: justify;
+  text-align-last: center !important;
+}
+.userLookupLinks{
+  order: 4;
+  padding: 0px 7px 40px 7px;
+  margin: auto -7px;
+  background-image: url("https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/yucky_div_repeat.png");
+  background-repeat: repeat-x;
+  background-position: bottom left;
+}
+.userLookupPets{
+  order: 5;
+  padding: 13px 7px 45px 7px;
+  margin: auto -7px;
+  background-image: url("https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/yucky_div_repeat.png");
+  background-repeat: repeat-x;
+  background-position: bottom left;
+}
+.userLookupPets > p:nth-child(1) {
+  visibility: collapse;
+  height: 0px;
+  margin-bottom: -13px;
+}
+#siteCharms{
+  order: 6;
+}
+#siteCharms div {
+    float: left !important;
+}
+#siteCharms > div:nth-child(8), #siteCharms > div:nth-child(9), #siteCharms > div:nth-child(10), #siteCharms > div:nth-child(11) {
+    margin-left: 57px !important;
+}
+#siteCharms > div:nth-child(12) {
+    clear: left !important;
+    margin-top: 7px !important;
+}
+#siteCharms > div:nth-child(13), #siteCharms > div:nth-child(14), #siteCharms > div:nth-child(15), #siteCharms > div:nth-child(16) {
+    margin-left: 57px !important;
+    margin-top: 7px !important;
+}
+#siteTrophies{
+  order: 7;
+  margin: 10px 0px;
+}
+#gameTrophies{
+  order: 8;
+  height: 137px;
+  overflow: scroll;
+}
+#contactLinks{
+  order: 9;
+  padding: 35px 7px 0px 7px  !important;
+  margin: auto -7px;
+  margin-top: 20px !important;
+  background-image: url("https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/yucky_div_repeat.png");
+  background-repeat: repeat-x;
+  background-position: top left;
+}
+.content::after {
+  order: 10;
+  display: block;
+  text-align: center;
+  content: url('https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/lmao.jpg');
+}
+.userLookupLinks, .userLookupPets {
+  max-width: none !important;
+  width: 100% !important;
+}
+.userLookupLinks, #siteCharms, #siteTrophies, #gameTrophies {
+  text-align: justify;
+  text-align-last: justify;
+}
+#siteCharms div, #siteTrophies div, #gameTrophies div, .userLookupLinks font, #siteCharms font, #siteTrophies font, #gameTrophies font {
+  text-align: center !important;
+  text-align-last: center !important;
+  display: block;
+}
+#siteCharms > font:nth-child(2), #siteTrophies > font:nth-child(2), #gameTrophies > font:nth-child(2) {
+  margin-bottom: -13px;
+}
+#siteCharms > a:nth-child(4) > font:nth-child(1), #siteTrophies > a:nth-child(4) > font:nth-child(1), #gameTrophies > a:nth-child(4) > font:nth-child(1) {
+  margin-bottom: -20px;
+}
+.userLookupLinks div {
+  text-align: center !important;
+  text-align-last: center !important;
+}
+audio {
+  border-radius: 50px !important;
+  overflow: hidden;
+}
+
+#esophagor {
+  position: fixed;
+  bottom: 5px;
+  left: 750px;
+  pointer-events: none;
+}
+
+#userLookupPet__haunted-mound__AK47 > a:nth-child(1) > img:nth-child(1) {
+transform: scaleX(-1);
+}
+
+.userLookupPets > p:nth-child(16) {
+    width: 49.75%;
+}
+#cat_IMLADRIS {
+    width: 49.75%;
+    float: left;
+}
+table.inner_tbl:nth-child(18) {
+    width: 49.75%;
+    float: left;
+    margin-bottom: 20px;
+}
+.userLookupPets > p:nth-child(19) {
+    width: 49.75%;
+    float: right;
+    margin-top: -30px;
+}
+#cat_MORDOR {
+    width: 49.75%;
+    float: right;
+}
+table.inner_tbl:nth-child(21) {
+    width: 49.75%;
+    float: right;
+    margin-bottom: 20px;
+}
+</style>
+        
+    
+    </div>
+    
+    <p>
+      <table id="userInfoContainer" width="100%" align="center" border="0" cellspacing="0" cellpadding="4">
+        <tbody style="vertical-align: middle;">
+          <tr>
+            <td id="userInfo">
+              <b>Name</b> : NINE / CAL
+              <br>
+              
+              
+              <b>Side Accounts:</b> 
+              
+                
+                <a href="https://neopetsclassic.com/userlookup/?user=AK47">AK47</a>
+              
+                | 
+                <a href="https://neopetsclassic.com/userlookup/?user=swirl">swirl</a>
+              
+                | 
+                <a href="https://neopetsclassic.com/userlookup/?user=homestuck">homestuck</a>
+              
+                | 
+                <a href="https://neopetsclassic.com/userlookup/?user=asylum">asylum</a>
+              
+              <br>
+              
+              
+              
+              <b>Status</b> : Online - Wasting NP
+              <br>
+              
+              <b>Last Spotted</b> : 
+              
+              
+              Under one day ago
+              
+              
+              <br>
+              <b>Gender</b> : <b>None</b>
+              
+              <br>
+              <b>Pronouns</b> : IT/ITS
+              
+              <br>
+              <b>Country</b>: United States
+              <br>
+              <b>Started Playing</b> : June 03, 2024
+              
+              <br>
+              <b>Hobbies</b> : Computer Programming,  Gaming,  Plushies
+              
+              
+              <br>
+              <b>Shop</b> : <a href="https://neopetsclassic.com/market/browseshop/?owner=9SCARECROWS">THE PUMPKIN PATCH</a> (Size 99)
+              
+              
+              <br>
+              <b>Gallery</b> : <a href="https://neopetsclassic.com/gallery/?username=9SCARECROWS">BROKEN ANGEL HOSPITAL</a> (Size 115)
+              
+              
+              <br>
+              <b>NeoDeck</b> : <a href="https://neopetsclassic.com/games/neodeck/?owner=9SCARECROWS">neodeck</a> has <b>75</b> cards (<b>75</b> unique)
+              
+              
+              <br>
+              <b>TCG Deck</b> : <a href="https://neopetsclassic.com/tcg/album/?owner=9SCARECROWS">9SCARECROWS's TCG Deck</a> (94/1217 cards)
+              
+              
+              
+              <br>
+              <b>NeoHome</b> : <a href="https://neopetsclassic.com/neohome/?owner=9SCARECROWS">7 Ghoul Close, Haunted Woods</a>
+                <br>+ <b>Rooms</b> : 1
+                
+                  <br>+ <b>Carpet</b> : Bare Floor
+                
+              
+              
+              
+              
+              <br>
+              <b>Sidebar Themes</b> : 4
+              
+              
+              <br>
+              <b>Secret Avatars</b> :  150
+              
+            </td>
+            <td id="userShield">
+              <img width="100" height="150" src="https://neopetsclassic.com/static/images/userlookup/shields/26mth.gif">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <div class="clear">
+    </div>
+    <div class="userLookupLinks">
+      
+      <div class="userLookupLink">
+        <a href="https://neopetsclassic.com/avatars/?user=9SCARECROWS">
+          <img src="https://neopetsclassic.com/images/avatars/esophagor.gif" alt="">
+        </a>
+        <br>Avatars
+      </div>
+      <div class="userLookupLink">
+        <a href="https://neopetsclassic.com/island/tradingpost/browse/?type=browse&category=3&search_string=9SCARECROWS">
+          <img src="https://neopetsclassic.com/static/images/userlookup/trades.fadd92ee7bdd.png" alt=""height="50px" width="50">
+        </a>
+        <br>Trades
+      </div>
+      <div class="userLookupLink">
+      <form action="/auctions/genie/search/" method="POST">
+        <input type="hidden" name="csrfmiddlewaretoken" value="mMRy9zfjkfjBDUi0d8akAUVtOxnTfvAGl23q56kKJFS45h9RUEvCjt9ySYv8yQMf">
+        <input type="hidden" name="username" value="9SCARECROWS">
+          <a href="#" onclick="this.closest('form').submit();">
+          <img src="https://neopetsclassic.com/static/images/userlookup/auctions.66744b60da61.png" alt="" height="50px" width="50">
+        </a>
+        <br>Auctions
+      </form>
+      </div>
+      
+      <div class="userLookupLink">
+        <a href="https://neopetsclassic.com/mygamescores/?randomfriend=9SCARECROWS">
+          <img src="https://neopetsclassic.com/static/images/userlookup/scores.8073247dc6f1.png" alt="" height="50px" width="50">
+        </a>
+        <br>Scores (48)
+      </div>
+      
+      
+      
+      <div class="userLookupLink">
+        <a href="https://neopetsclassic.com/collections/cabinet/?owner=9SCARECROWS">
+          <img src="https://neopetsclassic.com/static/images/userlookup/collectibles.3ede34aa8e10.png" alt="" height="50px" width="50">
+        </a>
+        <br>Collectibles (1)
+      </div>
+      
+      <div class="userLookupLink">
+        <a href="https://neopetsclassic.com/wishlist/?user=9SCARECROWS">
+          <img src="https://neopetsclassic.com/static/images/userlookup/wishlist.c139a4229f5a.png" alt=""height="50px" width="50">
+        </a>
+        <br>Wishlist
+      </div>
+      
+    </div>
+    <style type="text/css">
+       .content {
+        max-width: 728px;
+       }
+       #content_td {
+        max-width: 728px;
+       }
+       .inner_tbl {
+        margin: auto;
+        width: 100%;
+       }
+       .inner_tbl tr {
+        text-align: center;
+        margin: auto;
+       }
+       .userLookupPet {
+        hyphens: auto;
+        overflow-wrap: break-word;
+       }
+       .userLookupPets {
+        max-width: 595px;
+       }
+    </style>
+    <div class="userLookupPets">
+      <p><b>- NEOPETS -</b></p>
+      
+      
+      <p><b>- RAINBOW BRIDGE -</b></p>
+      <table cellspacing="0" cellpadding="3" width="450" align="center" border="0" id="cat_RAINBOW BRIDGE">
+        <table class="inner_tbl">
+        <tr>
+          
+          <td class="userLookupPet" id="userLookupPet__rainbow-bridge__Nine" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=Nine">
+              
+                
+                
+                <img src="https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/nine_henner150.png"  height="80" width="80">
+                
+              
+              <br>
+              Nine
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__rainbow-bridge__WARBOY" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=WARBOY">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/Kiko/angry/kiko_angel_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              WARBOY
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__rainbow-bridge__HOODIE" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=HOODIE">
+              
+                
+                
+                <img src="https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/NINES_DEFAULT.png"  height="80" width="80">
+                
+              
+              <br>
+              HOODIE
+            </a>
+          </td>
+          
+          
+        </tr>
+      </table>
+      
+      <p><b>- GRAVE HOUSE -</b></p>
+      <table cellspacing="0" cellpadding="3" width="450" align="center" border="0" id="cat_GRAVE HOUSE">
+        <table class="inner_tbl">
+        <tr>
+          
+          <td class="userLookupPet" id="userLookupPet__grave-house__SEMATARY-GRAVEMAN" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=SEMATARY-GRAVEMAN">
+              
+                
+                
+                <img src="https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/werelupe_throne_150.png"  height="80" width="80">
+                
+              
+              <br>
+              SEMATARY-GRAVEMAN
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__grave-house__GHOSTMOUNTAIN" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=GHOSTMOUNTAIN">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/Mynci/angry/mynci_halloween_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              GHOSTMOUNTAIN
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__grave-house__HACKLEDOWN" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=HACKLEDOWN">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/Grarrl/grarrl_darigan_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              HACKLEDOWN
+            </a>
+          </td>
+          
+      </tr>
+      </table>
+      <table class="inner_tbl">
+      <tr>
+        
+          
+        </tr>
+      </table>
+      
+      <p><b>- HAUNTED WOODS -</b></p>
+      <table cellspacing="0" cellpadding="3" width="450" align="center" border="0" id="cat_HAUNTED WOODS">
+        <table class="inner_tbl">
+        <tr>
+          
+          <td class="userLookupPet" id="userLookupPet__haunted-woods__Insatiable" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=Insatiable">
+              
+                
+                
+                <img src="https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/esoverlay_150F.png"  height="80" width="80">
+                
+              
+              <br>
+              Insatiable
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__haunted-woods__Cerebral" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=Cerebral">
+              
+                
+                
+                <img src="https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/brainoverlay_150.png"  height="80" width="80">
+                
+              
+              <br>
+              Cerebral
+            </a>
+          </td>
+          
+      </tr>
+      </table>
+      <table class="inner_tbl">
+      <tr>
+        
+          
+        </tr>
+      </table>
+      
+      <p><b>- BACKYARD FIELD -</b></p>
+      <table cellspacing="0" cellpadding="3" width="450" align="center" border="0" id="cat_BACKYARD FIELD">
+        <table class="inner_tbl">
+        <tr>
+          
+          <td class="userLookupPet" id="userLookupPet__backyard-field__OFRE2017" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=OFRE2017">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/Kyrii/angry/kyrii_tyrannian_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              OFRE2017
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__backyard-field__Cotards" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=Cotards">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/Korbat/defended/korbat_zombie_right.gif"  height="80" width="80">
+                
+              
+              <br>
+              Cotards
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__backyard-field__Psychotic" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=Psychotic">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/Poogle/angry/poogle_grey_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              Psychotic
+            </a>
+          </td>
+          
+          
+        </tr>
+      </table>
+      
+      <p><b>- IMLADRIS -</b></p>
+      <table cellspacing="0" cellpadding="3" width="450" align="center" border="0" id="cat_IMLADRIS">
+        <table class="inner_tbl">
+        <tr>
+          
+          <td class="userLookupPet" id="userLookupPet__imladris__Edhelharn" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=Edhelharn">
+              
+                
+                  <img src="https://neopetsclassic.com/images/pets/Lupe/80by80/lupe_green_happy.gif" alt="" height="80" width="80">
+                
+              
+              <br>
+              Edhelharn
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__imladris__Undomiel" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=Undomiel">
+              
+                
+                  <img src="https://neopetsclassic.com/images/pets/Aisha/80by80/aisha_blue_happy.gif" alt="" height="80" width="80">
+                
+              
+              <br>
+              Undomiel
+            </a>
+          </td>
+          
+          
+        </tr>
+      </table>
+      
+      <p><b>- MORDOR -</b></p>
+      <table cellspacing="0" cellpadding="3" width="450" align="center" border="0" id="cat_MORDOR">
+        <table class="inner_tbl">
+        <tr>
+          
+          <td class="userLookupPet" id="userLookupPet__mordor__Witch-King" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=Witch-King">
+              
+                
+                
+                <img src="https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/WITCHKING_happy.png"  height="80" width="80">
+                
+              
+              <br>
+              Witch-King
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__mordor__Ringwraith" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=Ringwraith">
+              
+                
+                
+                <img src="https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/darihissi_150L.png"  height="80" width="80">
+                
+              
+              <br>
+              Ringwraith
+            </a>
+          </td>
+          
+          
+        </tr>
+      </table>
+      
+      <p><b>- BROKEN ANGEL HOSPITAL -</b></p>
+      <table cellspacing="0" cellpadding="3" width="450" align="center" border="0" id="cat_BROKEN ANGEL HOSPITAL">
+        <table class="inner_tbl">
+        <tr>
+          
+          <td class="userLookupPet" id="userLookupPet__broken-angel-hospital__HAW" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=HAW">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/Chia/chia_grey_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              HAW
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__broken-angel-hospital__BUNNYSUIT" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=BUNNYSUIT">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/Cybunny/angry/cybunny_grey_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              BUNNYSUIT
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__broken-angel-hospital__5150" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=5150">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/Eyrie/angry/eyrie_grey_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              5150
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__broken-angel-hospital__TOOLBOX" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=TOOLBOX">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/Gnorbu/angry/gnorbu_grey_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              TOOLBOX
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__broken-angel-hospital__WAYSIDE" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=WAYSIDE">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/Xweetok/xweetok_grey_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              WAYSIDE
+            </a>
+          </td>
+          
+      </tr>
+      </table>
+      <table class="inner_tbl">
+      <tr>
+        
+          
+        </tr>
+      </table>
+      
+      <p><b>- HAUNTED MOUND -</b></p>
+      <table cellspacing="0" cellpadding="3" width="450" align="center" border="0" id="cat_HAUNTED MOUND">
+        <table class="inner_tbl">
+        <tr>
+          
+          <td class="userLookupPet" id="userLookupPet__haunted-mound__Angelmaker" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=Angelmaker">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/Lupe/defended/lupe_tyrannian_left.gif"  height="80" width="80">
+                
+              
+              <br>
+              Angelmaker
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__haunted-mound__Shotgun" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=Shotgun">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/Lupe/angry/lupe_stone_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              Shotgun
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__haunted-mound__MYTEDDY" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=MYTEDDY">
+              
+                
+                
+                <img src="https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/MYTEDDY_beatenR.png"  height="80" width="80">
+                
+              
+              <br>
+              MYTEDDY
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__haunted-mound__AK47" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=AK47">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/Lupe/angry/lupe_gold_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              AK47
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__haunted-mound__Raging" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=Raging">
+              
+                
+                
+                <img src="https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/RAGING_defendR.png"  height="80" width="80">
+                
+              
+              <br>
+              Raging
+            </a>
+          </td>
+          
+      </tr>
+      </table>
+      <table class="inner_tbl">
+      <tr>
+        
+          
+          <td class="userLookupPet" id="userLookupPet__haunted-mound__Taxidermied" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=Taxidermied">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/Draik/closeattack/draik_zombie_right.gif"  height="80" width="80">
+                
+              
+              <br>
+              Taxidermied
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__haunted-mound__Scissorhands" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=Scissorhands">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/secondary_pets/Blumaroo/blumaroo_darigan_shadow_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              Scissorhands
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__haunted-mound__Stigmata" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=Stigmata">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/JubJub/rangedattack/jubjub_angel_right.gif"  height="80" width="80">
+                
+              
+              <br>
+              Stigmata
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__haunted-mound__Skellingtons" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=Skellingtons">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/Eyrie/angry/eyrie_halloween_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              Skellingtons
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__haunted-mound__GRAVEYARDS" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=GRAVEYARDS">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/Uni/angry/uni_halloween_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              GRAVEYARDS
+            </a>
+          </td>
+          
+      </tr>
+      </table>
+      <table class="inner_tbl">
+      <tr>
+        
+          
+          <td class="userLookupPet" id="userLookupPet__haunted-mound__REDRUM" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=REDRUM">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/JubJub/angry/jubjub_halloween_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              REDRUM
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__haunted-mound__MOUNDRICH" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=MOUNDRICH">
+              
+                
+                
+                <img src="https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/darilutari_happy.png"  height="80" width="80">
+                
+              
+              <br>
+              MOUNDRICH
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__haunted-mound__MORDUM" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=MORDUM">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/Kiko/angry/kiko_halloween_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              MORDUM
+            </a>
+          </td>
+          
+          
+        </tr>
+      </table>
+      
+      <p><b>- SALEM -</b></p>
+      <table cellspacing="0" cellpadding="3" width="450" align="center" border="0" id="cat_SALEM">
+        <table class="inner_tbl">
+        <tr>
+          
+          <td class="userLookupPet" id="userLookupPet__salem__Tair" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=Tair">
+              
+                
+                
+                <img src="https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/tair_beaten.png"  height="80" width="80">
+                
+              
+              <br>
+              Tair
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__salem__LITTLELAMB" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=LITTLELAMB">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/Aisha/beaten/aisha_tomato_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              LITTLELAMB
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__salem__HAILMARY" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=HAILMARY">
+              
+                
+                
+                <img src="https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/HAILMARY.png"  height="80" width="80">
+                
+              
+              <br>
+              HAILMARY
+            </a>
+          </td>
+          
+          
+        </tr>
+      </table>
+      
+      <p><b>- RX -</b></p>
+      <table cellspacing="0" cellpadding="3" width="450" align="center" border="0" id="cat_RX">
+        <table class="inner_tbl">
+        <tr>
+          
+          <td class="userLookupPet" id="userLookupPet__rx__OPIOID" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=OPIOID">
+              
+                
+                
+                <img src="https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/opioid.png"  height="80" width="80">
+                
+              
+              <br>
+              OPIOID
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__rx__Codeine" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=Codeine">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/old_pets/Poogle/sad/poogle_faerie_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              Codeine
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__rx__Oxycontin" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=Oxycontin">
+              
+                
+                
+                <img src="https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/OC_BEATEN.png"  height="80" width="80">
+                
+              
+              <br>
+              Oxycontin
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__rx__Oxycodone" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=Oxycodone">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/Lupe/beaten/lupe_blue_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              Oxycodone
+            </a>
+          </td>
+          
+      </tr>
+      </table>
+      <table class="inner_tbl">
+      <tr>
+        
+          
+          <td class="userLookupPet" id="userLookupPet__rx__Percocet" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=Percocet">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/Kiko/angry/kiko_maraquan_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              Percocet
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__rx__MDMA" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=MDMA">
+              
+                
+                
+                <img src="https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/maramynci150.png"  height="80" width="80">
+                
+              
+              <br>
+              MDMA
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__rx__Withdrawal" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=Withdrawal">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/Wocky/beaten/wocky_yellow_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              Withdrawal
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__rx__RELAPSE" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=RELAPSE">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/Jetsam/jetsam_pink_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              RELAPSE
+            </a>
+          </td>
+          
+      </tr>
+      </table>
+      <table class="inner_tbl">
+      <tr>
+        
+          
+          <td class="userLookupPet" id="userLookupPet__rx__Dose" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=Dose">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/Blumaroo/beaten/blumaroo_green_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              Dose
+            </a>
+          </td>
+          
+          
+        </tr>
+      </table>
+      
+      <p><b>- THE PALE (AND BEYOND) -</b></p>
+      <table cellspacing="0" cellpadding="3" width="450" align="center" border="0" id="cat_THE PALE (AND BEYOND)">
+        <table class="inner_tbl">
+        <tr>
+          
+          <td class="userLookupPet" id="userLookupPet__the-pale-and-beyond__DSBM" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=DSBM">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/JubJub/beaten/jubjub_valentine_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              DSBM
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__the-pale-and-beyond__Lifelover" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=Lifelover">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/secondary_pets/Peophin/angry/peophin_darigan_green_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              Lifelover
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__the-pale-and-beyond__Cenobite" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=Cenobite">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/Chomby/closeattack/chomby_darigan_right.gif"  height="80" width="80">
+                
+              
+              <br>
+              Cenobite
+            </a>
+          </td>
+          
+          
+        </tr>
+      </table>
+      
+      <p><b>- WONDERLAND [MOVING TO ASYLUM] -</b></p>
+      <table cellspacing="0" cellpadding="3" width="450" align="center" border="0" id="cat_WONDERLAND [MOVING TO ASYLUM]">
+        <table class="inner_tbl">
+        <tr>
+          
+          <td class="userLookupPet" id="userLookupPet__wonderland-moving-to-asylum__Vorpal" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=Vorpal">
+              
+                
+                
+                <img src="https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/AO_henner_150_bicubic.png"  height="80" width="80">
+                
+              
+              <br>
+              Vorpal
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__wonderland-moving-to-asylum__AliceLiddell" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=AliceLiddell">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/Aisha/sad/aisha_grey_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              AliceLiddell
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__wonderland-moving-to-asylum__Hysterium" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=Hysterium">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/Aisha/angry/aisha_white_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              Hysterium
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__wonderland-moving-to-asylum__Leatherette" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=Leatherette">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/Aisha/aisha_darigan_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              Leatherette
+            </a>
+          </td>
+          
+      </tr>
+      </table>
+      <table class="inner_tbl">
+      <tr>
+        
+          
+          <td class="userLookupPet" id="userLookupPet__wonderland-moving-to-asylum__Misstitched" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=Misstitched">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/Aisha/aisha_plushie_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              Misstitched
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__wonderland-moving-to-asylum__Anamnesis" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=Anamnesis">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/Peophin/peophin_carousel_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              Anamnesis
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__wonderland-moving-to-asylum__Hatter" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=Hatter">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/Chia/chia_halloween_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              Hatter
+            </a>
+          </td>
+          
+          
+          <td class="userLookupPet" id="userLookupPet__wonderland-moving-to-asylum__Jabberwocky" valign="top" align="center" width="125px">
+            <a href="/petlookup/?pet_name=Jabberwocky">
+              
+                
+                
+                <img src="https://neopetsclassic.com/images/pets/Draik/draik_mutant_baby.gif"  height="80" width="80">
+                
+              
+              <br>
+              Jabberwocky
+            </a>
+          </td>
+          
+      </tr>
+      </table>
+      <table class="inner_tbl">
+      <tr>
+        
+          
+        </tr>
+      </table>
+      
+      
+      <p><b>- Uncategorised Pets -</b></p>
+      <table height="100" cellspacing="0" cellpadding="3" width="450" align="center" border="0" id="uncat_pets">
+        <table class="inner_tbl">
+        <tr>
+          
+          <td class="userLookupPet" valign="top" align="center">
+            <a href="/petlookup/?pet_name=Calwyn">
+          
+              
+              
+              
+              <img src="https://images.neopetsclassic.com/users/neodrive/5b116857-19b9-4701-86dd-8f66513863b8/tyrannianyurb.png"  height="80" width="80">
+              
+          
+          <br>
+          Calwyn
+        </a>
+          </td>
+          
+          
+        </tr>
+      </table>
+      
+      
+    </div>
+    
+    <div style="padding-top:10px;text-align:center;" id="siteTrophies">
+      <hr align="center" noshade="" size="1">
+      <font size="-2"><b>- Site Feature Trophies -</b></font>
+      
+      <br>
+      <a href="https://neopetsclassic.com/trophies/sort/site/">
+      <font size="1">( edit )</font>
+      </a>
+      
+      <br><br>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+        
+          <img src="https://neopetsclassic.com/static/images/trophies/bronze_supporter.gif">
+        
+          <br>
+          <font size="1"><b>Bronze Supporter
+          </b></font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+        
+          <img src="https://neopetsclassic.com/static/images/trophies/trophy1.gif">
+        
+          <br>
+          <font size="1"><b>Kadoatery
+          
+          <br>
+          (2873 fed)
+          </b></font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+        
+          <img src="https://neopetsclassic.com/static/images/trophies/jhudy_trophy.png">
+        
+          <br>
+          <font size="1"><b>Team Jhudora
+          </b></font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+        
+          <img src="https://neopetsclassic.com/static/images/trophies/fire_gold.gif">
+        
+          <br>
+          <font size="1"><b>Team Fire FANATIC!!!
+          </b></font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+        
+          <img src="https://neopetsclassic.com/static/images/trophies/altador_trophy.gif">
+        
+          <br>
+          <font size="1"><b>Royal Astronomer
+          </b></font>
+        </div>
+      
+    </div>
+    
+    
+    
+    <div style="padding-top:10px;text-align:center;" id="siteCharms">
+      <hr align="center" noshade="" size="1">
+      <font size="1"><b>- Site Charms & Pins -</b></font>
+      
+      <br>
+      <a onclick="window.open('/userinfo/edit_charms/',
+                           'newwindow',
+                           'width=410,height=500');
+                           return false;">
+      <font size="1">( edit )</font>
+      </a>
+      
+      <br><br>
+      
+        <div style="width:100px;margin:auto;display:inline-block;vertical-align:top;text-align:center;">
+          <img src="https://neopetsclassic.com/static/images/items/Retro_Rainbow_Pride_Lutari_80x80.gif">
+          <br>
+          <font size="1"><b>Retro Rainbow Pride Lutari Keychain</b></font>
+        </div>
+      
+        <div style="width:100px;margin:auto;display:inline-block;vertical-align:top;text-align:center;">
+          <img src="https://neopetsclassic.com/static/images/items/lutari_pride_trans.gif">
+          <br>
+          <font size="1"><b>Transgender Pride Lutari Keychain</b></font>
+        </div>
+      
+        <div style="width:100px;margin:auto;display:inline-block;vertical-align:top;text-align:center;">
+          <img src="https://neopetsclassic.com/static/images/items/grey_faerie_charm.png">
+          <br>
+          <font size="1"><b>Grey Faerie Charm</b></font>
+        </div>
+      
+        <div style="width:100px;margin:auto;display:inline-block;vertical-align:top;text-align:center;">
+          <img src="https://neopetsclassic.com/static/images/items/Gayman_Pride_Lutari_80x80.gif">
+          <br>
+          <font size="1"><b>Gayman Pride Lutari Keychain</b></font>
+        </div>
+      
+        <div style="width:100px;margin:auto;display:inline-block;vertical-align:top;text-align:center;">
+          <img src="https://neopetsclassic.com/static/images/items/Bear_Pride_Lutari_80x80.gif">
+          <br>
+          <font size="1"><b>Bear Pride Lutari Keychain</b></font>
+        </div>
+      
+        <div style="width:100px;margin:auto;display:inline-block;vertical-align:top;text-align:center;">
+          <img src="https://neopetsclassic.com/static/images/items/babaa_charm.png">
+          <br>
+          <font size="1"><b>Babaa Economist Charm</b></font>
+        </div>
+      
+        <div style="width:100px;margin:auto;display:inline-block;vertical-align:top;text-align:center;">
+          <img src="https://neopetsclassic.com/static/images/items/charm_strange_frag.gif">
+          <br>
+          <font size="1"><b>Lucky Fragment Charm</b></font>
+        </div>
+      
+        <div style="width:100px;margin:auto;display:inline-block;vertical-align:top;text-align:center;">
+          <img src="https://neopetsclassic.com/static/images/items/rainbow_faerie_charm.png">
+          <br>
+          <font size="1"><b>Rainbow Faerie Bead Bracelet</b></font>
+        </div>
+      
+        <div style="width:100px;margin:auto;display:inline-block;vertical-align:top;text-align:center;">
+          <img src="https://neopetsclassic.com/static/images/items/Paint-Brush-Charm.gif">
+          <br>
+          <font size="1"><b>Paint Brush Charm</b></font>
+        </div>
+      
+        <div style="width:100px;margin:auto;display:inline-block;vertical-align:top;text-align:center;">
+          <img src="https://neopetsclassic.com/static/images/items/charm_snowager_peaceful.gif">
+          <br>
+          <font size="1"><b>Peaceful Snowager Charm</b></font>
+        </div>
+      
+    </div>
+    
+    
+    
+    <div style="padding-top:10px;text-align:center;" id="gameTrophies">
+      <hr align="center" noshade="" size="1">
+      <font size="-2"><b>- Game Trophies -</b></font>
+      
+      <br>
+      <a href="https://neopetsclassic.com/trophies/sort/games/">
+      <font size="1">( edit )</font>
+      </a>
+      
+      <br><br>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=120">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/69_1.gif">
+          </a>
+          <br>
+          <font size="1">
+              
+                  <b>
+              
+              
+                  Esophagor Quest CHAMPION!!!
+              
+              
+                  </b>
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=75">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/75_1.gif">
+          </a>
+          <br>
+          <font size="1">
+              
+                  <b>
+              
+              
+                  Brain Tree Quest CHAMPION!!!
+              
+              
+                  </b>
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=230">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/230_1.png">
+          </a>
+          <br>
+          <font size="1">
+              
+                  <b>
+              
+              
+                  The Castle of Eliv Thade CHAMPION!!!
+              
+              
+                  </b>
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=126">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/126_1.png">
+          </a>
+          <br>
+          <font size="1">
+              
+                  <b>
+              
+              
+                  Jhudora&#x27;s Cloud CHAMPION!!!
+              
+              
+                  </b>
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=160">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/160_1.gif">
+          </a>
+          <br>
+          <font size="1">
+              
+                  <b>
+              
+              
+                  Illusen&#x27;s Glade CHAMPION!!!
+              
+              
+                  </b>
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=103">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/103_1.gif">
+          </a>
+          <br>
+          <font size="1">
+              
+                  <b>
+              
+              
+                  Poetry Competition CHAMPION!!!
+              
+              
+                  </b>
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=67">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/67_1.gif">
+          </a>
+          <br>
+          <font size="1">
+              
+                  <b>
+              
+              
+                  Pyramids CHAMPION!!!
+              
+              
+                  </b>
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/games/sakhmet_solitaire/">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/77_1.png">
+          </a>
+          <br>
+          <font size="1">
+              
+                  <b>
+              
+              
+                  Sakhmet Solitaire Bonus CHAMPION!!!
+              
+              
+                  </b>
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=218">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/218_1.gif">
+          </a>
+          <br>
+          <font size="1">
+              
+                  <b>
+              
+              
+                  Grumpy Old King CHAMPION!!!
+              
+              
+                  </b>
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=549">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/1_1.gif">
+          </a>
+          <br>
+          <font size="1">
+              
+                  <b>
+              
+              
+                  Faerie Quests CHAMPION!!!
+              
+              
+                  </b>
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=805">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/fashion_fever_gold.gif">
+          </a>
+          <br>
+          <font size="1">
+              
+                  <b>
+              
+              
+                  Fashion Fever CHAMPION!!!
+              
+              
+                  </b>
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=548">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/548_2.png">
+          </a>
+          <br>
+          <font size="1">
+              
+              
+                  Generous Wishing Well Donor!!
+              
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=76">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/76_1.png">
+          </a>
+          <br>
+          <font size="1">
+              
+                  <b>
+              
+              
+                  Sakhmet Solitaire CHAMPION!!!
+              
+              
+                  </b>
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=36">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/2_1.gif">
+          </a>
+          <br>
+          <font size="1">
+              
+                  <b>
+              
+              
+                  Vending Machine CHAMPION!!!
+              
+              
+                  </b>
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=6">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/6_2.png">
+          </a>
+          <br>
+          <font size="1">
+              
+              
+                  Second Place at Gormball!!
+              
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=353">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/353_2.png">
+          </a>
+          <br>
+          <font size="1">
+              
+              
+                  Second Place at Web of Vernax!!
+              
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/games/pyramids/">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/68_2.gif">
+          </a>
+          <br>
+          <font size="1">
+              
+              
+                  Second Place at Pyramid Bonus!!
+              
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=884">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/884_2.png">
+          </a>
+          <br>
+          <font size="1">
+              
+              
+                  Second Place at Usuki Frenzy!!
+              
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=183">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/183_2.png">
+          </a>
+          <br>
+          <font size="1">
+              
+              
+                  Second Place at Pick Your Own!!
+              
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=547">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/196_1.gif">
+          </a>
+          <br>
+          <font size="1">
+              
+                  <b>
+              
+              
+                  Tax Beast CHAMPION!!!
+              
+              
+                  </b>
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=493">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/493_3.png">
+          </a>
+          <br>
+          <font size="1">
+              
+              
+                  Third Place at Wise Old King!
+              
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=383">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/342_3.gif">
+          </a>
+          <br>
+          <font size="1">
+              
+              
+                  Third place at NeoBoard Avatar Collector!
+              
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/games/lottery/">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/58_3.gif">
+          </a>
+          <br>
+          <font size="1">
+              
+              
+                  Third Place at The Neopian Lottery!
+              
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=368">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/368_3.png">
+          </a>
+          <br>
+          <font size="1">
+              
+              
+                  Third Place at Hasee Bounce!
+              
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=507">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/507_3.png">
+          </a>
+          <br>
+          <font size="1">
+              
+              
+                  Third Place at Ice Cream Machine!
+              
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=412">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/412_3.png">
+          </a>
+          <br>
+          <font size="1">
+              
+              
+                  Third Place at Snowmuncher!
+              
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=47">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/47_2.gif">
+          </a>
+          <br>
+          <font size="1">
+              
+              
+                  Second Place at Tyranu Evavu!!
+              
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=540">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/540_3.png">
+          </a>
+          <br>
+          <font size="1">
+              
+              
+                  Third Place at Meepit vs. Feepit!
+              
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=331">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/331_3.gif">
+          </a>
+          <br>
+          <font size="1">
+              
+              
+                  Third Place at Test Your Strength!
+              
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=648">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/648_3.png">
+          </a>
+          <br>
+          <font size="1">
+              
+              
+                  Third Place at Tyrannian Mini Golf!
+              
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=159">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/159_3.png">
+          </a>
+          <br>
+          <font size="1">
+              
+              
+                  Third Place at Gadgadsgame!
+              
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=358">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/358_3.gif">
+          </a>
+          <br>
+          <font size="1">
+              
+              
+                  Third Place at Faerie Bubbles!
+              
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=933">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/933_3.png">
+          </a>
+          <br>
+          <font size="1">
+              
+              
+                  Third Place at Smug Bug Smite!
+              
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=615">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/615_3.png">
+          </a>
+          <br>
+          <font size="1">
+              
+              
+                  Third Place at Jolly Jugglers!
+              
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=9998">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/5_3.gif">
+          </a>
+          <br>
+          <font size="1">
+              
+              
+                  Third Place at Ice Cream Cart!!
+              
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=9">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/9_3.png">
+          </a>
+          <br>
+          <font size="1">
+              
+              
+                  Third Place at NeoCola Machine!
+              
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=519">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/519_3.gif">
+          </a>
+          <br>
+          <font size="1">
+              
+              
+                  Third Place at Kiko Match II!
+              
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=659">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/659_3.png">
+          </a>
+          <br>
+          <font size="1">
+              
+              
+                  Third Place at Sophie&#x27;s Stew!
+              
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=14">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/14_3.gif">
+          </a>
+          <br>
+          <font size="1">
+              
+              
+                  Third Place at Guess the Card!
+              
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=417">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/417_1.png">
+          </a>
+          <br>
+          <font size="1">
+              
+                  <b>
+              
+              
+                  Guess the Card Streak CHAMPION!!!
+              
+              
+                  </b>
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=180">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/180_3.gif">
+          </a>
+          <br>
+          <font size="1">
+              
+              
+                  Third place at Meristones!!
+              
+              
+          </font>
+        </div>
+      
+        <div style="max-width:100px;margin:auto;display:inline-block;vertical-align:top;">
+          
+            <a href="https://neopetsclassic.com/gamescores/?game_id=181">
+          
+            <img src="https://neopetsclassic.com/static/images/trophies/181_3.gif">
+          </a>
+          <br>
+          <font size="1">
+              
+              
+                  Third place at Meristones Cumulative!!
+              
+              
+          </font>
+        </div>
+      
+    </div>
+    
+    <div style="padding-top:10px;text-align:center;" id="contactLinks">
+      <hr align="center" noshade="" size="1">
+      <div style="display:inline-block;padding:6px;font-size:7.5pt;">
+        <a href="https://neopetsclassic.com/neomessages/sendmessage/?username=9SCARECROWS">
+          <img src="https://neopetsclassic.com/static/images/userlookup/neomail.c5e123b770b6.gif" width="40" height="40">
+        </a>
+        <br>
+        Send Neomail
+      </div>
+      <div style="display:inline-block;padding:6px;font-size:7.5pt;">
+        <form action="/neofriends/send_request/" method="POST">
+          <input type="hidden" name="csrfmiddlewaretoken" value="mMRy9zfjkfjBDUi0d8akAUVtOxnTfvAGl23q56kKJFS45h9RUEvCjt9ySYv8yQMf">
+          <input type="hidden" name="username" value="9SCARECROWS">
+          <a href="https://neopetsclassic.com/neofriends/send_request/">
+            <button type="submit" style="border:none;background:none;padding:0;">
+              <img src="https://neopetsclassic.com/static/images/userlookup/neofriend.b850eb452fa3.gif" width="40" height="40">
+            </button>
+          </a>
+          <br>
+          Make Neofriend
+        </form>
+      </div>
+      
+      <div style="display:inline-block;padding:6px;font-size:7.5pt;">
+        <form action="/block/process_request/" method="POST">
+          <input type="hidden" name="csrfmiddlewaretoken" value="mMRy9zfjkfjBDUi0d8akAUVtOxnTfvAGl23q56kKJFS45h9RUEvCjt9ySYv8yQMf">
+          <input type="hidden" name="username" value="9SCARECROWS">
+          <a href="https://neopetsclassic.com/block/process_request/" onclick="return confirm('Are you sure you wish to do this? This will add this user to your block list.')">
+            <button type="submit" style="border:none;background:none;padding:0;">
+              <img src="https://neopetsclassic.com/static/images/userlookup/block.a1a9216df7b3.gif" width="40" height="40">
+            </button>
+          </a>
+          <br>
+          Block User
+        </form>
+      </div>
+    </div>
+      
+    
+    
+</div>
+
+ </td>
+</tr>
+</table>
+  </td>
+  
+<td style="float:left;" valign="top" id="activitiesManager">
+  <div class="sidebar-container">
+    <div class="sidebar-section st">
+<a href="https://neopetsclassic.com/activities_manager/" class="default_txt_clr">Customise</a>
+
+  
+    
+      
+        <p>
+          <b class="default_txt_clr">Quick Links</b><br>
+          <table width="95%" cellspacing="0" style="padding-left:10px; width:170px;">
+            <tbody>
+              
+                
+                  <div id="sidebar_quicklinks" class="default_txt_clr" style="border:0px; width:170px; padding-left:10px;">
+                    <div style="overflow-x: hidden; max-height:230px;padding-right:10px">
+                      
+                        
+                          
+                            <a href="https://neopetsclassic.com/inventory/" title="Inventory">
+                              <img src="https://neopetsclassic.com/static/images/misc/dailyicons/inventory.d53d64466994.png" style="width:30px;height:30px;object-fit:contain;padding:3px;">
+                            </a>
+                          
+                        
+                      
+                        
+                          
+                            <a href="https://neopetsclassic.com/bank/" title="National Neopian">
+                              <img src="https://neopetsclassic.com/static/images/misc/dailyicons/interest.63061d280f85.png" style="width:30px;height:30px;object-fit:contain;padding:3px;">
+                            </a>
+                          
+                        
+                      
+                        
+                          
+                            <a href="https://neopetsclassic.com/market/till/" title="Shop Till">
+                              <img src="https://neopetsclassic.com/static/images/misc/dailyicons/shop_till.56021b97e101.png" style="width:30px;height:30px;object-fit:contain;padding:3px;">
+                            </a>
+                          
+                        
+                      
+                        
+                          
+                            <a href="https://neopetsclassic.com/market/wizard/" title="Shop Wizard">
+                              <img src="https://neopetsclassic.com/static/images/misc/dailyicons/wiz.2028ef2e1a43.png" style="width:30px;height:30px;object-fit:contain;padding:3px;">
+                            </a>
+                          
+                        
+                      
+                        
+                          
+                            <a href="https://neopetsclassic.com/island/tradingpost/" title="Trading Post">
+                              <img src="https://neopetsclassic.com/static/images/misc/dailyicons/tradepost.4dddc465c8b4.png" style="width:30px;height:30px;object-fit:contain;padding:3px;">
+                            </a>
+                          
+                        
+                      
+                        
+                          
+                            <a href="https://neopetsclassic.com/auctions/" title="Auction House">
+                              <img src="https://neopetsclassic.com/static/images/misc/dailyicons/auction.5d783384ebbe.png" style="width:30px;height:30px;object-fit:contain;padding:3px;">
+                            </a>
+                          
+                        
+                      
+                        
+                          
+                            <a href="https://neopetsclassic.com/safetydeposit/" title="Safety Deposit Box">
+                              <img src="https://neopetsclassic.com/static/images/misc/dailyicons/SDB.c0d5d451c637.png" style="width:30px;height:30px;object-fit:contain;padding:3px;">
+                            </a>
+                          
+                        
+                      
+                        
+                          
+                            <a href="https://neopetsclassic.com/quickstock/" title="Quickstock">
+                              <img src="https://neopetsclassic.com/static/images/misc/dailyicons/quickstock.4b9061606ba6.png" style="width:30px;height:30px;object-fit:contain;padding:3px;">
+                            </a>
+                          
+                        
+                      
+                        
+                          
+                            
+                              
+                                
+                                  <a href="https://neopetsclassic.com/rainbowpool/neopetcolours/" title="Rainbow Pool">
+                                    
+                                      <img src="https://portal.neopets.com/images/characters/Faeries-Naia.png" style="width:30px;height:30px;object-fit:contain;padding:3px;">
+                                    
+                                  </a>
+                                
+                              
+                            
+                          
+                        
+                      
+                        
+                          
+                            
+                              
+                                
+                                  <a href="https://neopetsclassic.com/faerieland/hiddentower/" title="Hidden Tower">
+                                    
+                                      <img src="https://portal.neopets.com/images/characters/Faeries-Fyora.png" style="width:30px;height:30px;object-fit:contain;padding:3px;">
+                                    
+                                  </a>
+                                
+                              
+                            
+                          
+                        
+                      
+                        
+                          
+                            
+                              
+                                
+                                  <a href="https://neopetsclassic.com/winter/brokentoys/" title="toy repair">
+                                    
+                                      <img src="https://neopetsclassic.com/images/misc/brokenshopkeeper.gif" style="width:30px;height:30px;object-fit:contain;padding:3px;">
+                                    
+                                  </a>
+                                
+                              
+                            
+                          
+                        
+                      
+                        
+                          
+                            <a href="https://neopetsclassic.com/space/workshop/grinder/" title="Garbage Grinder">
+                              <img src="https://neopetsclassic.com/static/images/misc/shopicons/grinder.4da1e21436d9.png" style="width:30px;height:30px;object-fit:contain;padding:3px;">
+                            </a>
+                          
+                        
+                      
+                        
+                          
+                            <a href="https://neopetsclassic.com/winter/mysteri_ice_munchies/" title="Mysteri-Ice Munchies">
+                              <img src="https://neopetsclassic.com/static/images/misc/dailyicons/mysteri-ice-icon.438f808ebe9b.png" style="width:30px;height:30px;object-fit:contain;padding:3px;">
+                            </a>
+                          
+                        
+                      
+                        
+                          
+                            <a href="https://neopetsclassic.com/winter/shopofmystery/" title="Tarla's Shop of Mystery">
+                              <img src="https://neopetsclassic.com/static/images/misc/dailyicons/tarla.bab82fc62ba4.png" style="width:30px;height:30px;object-fit:contain;padding:3px;">
+                            </a>
+                          
+                        
+                      
+                        
+                          
+                            <a href="https://neopetsclassic.com/games/habitarium/game/" title="Habitarium">
+                              <img src="https://neopetsclassic.com/static/images/misc/dailyicons/pinchit.f7b4f3fbe862.png" style="width:30px;height:30px;object-fit:contain;padding:3px;">
+                            </a>
+                          
+                        
+                      
+                        
+                          
+                            <a href="https://neopetsclassic.com/space/gormball/" title="Gormball">
+                              <img src="https://neopetsclassic.com/static/images/misc/dailyicons/gormball.59d0a41644ca.png" style="width:30px;height:30px;object-fit:contain;padding:3px;">
+                            </a>
+                          
+                        
+                      
+                        
+                          
+                          
+                          
+                            <div class="daily_icn" style="display:inline-block; vertical-align:top; text-align:center;">
+                                <a href="https://neopetsclassic.com/donations/" title="Money Tree">
+                                  <img src="https://neopetsclassic.com/static/images/misc/dailyicons/moneytree.0f13b4405e23.png" style="width:30px;height:30px;object-fit:contain;padding:3px;">
+                                  <br><span class="default_clk_txt">0/10</span>
+                                </a>
+                            </div>
+                          
+                          
+                          
+                        
+                      
+                        
+                          
+                            <div class="daily_icn" style="display:inline-block; vertical-align:top; text-align:center;">
+
+                                <a href="https://neopetsclassic.com/winter/igloo2/" title="Igloo Garage Sale">
+                                  <img src="https://neopetsclassic.com/static/images/misc/dailyicons/igloo.e5aaec96e57a.png" style="width:30px;height:30px;object-fit:contain;padding:3px;">
+                                  <br><span class="default_clk_txt">0/10</span>
+                                </a>
+                            </div>
+                          
+                        
+                      
+                        
+                          
+                            
+                              
+                                
+                              
+                            
+                          
+                        
+                      
+                        
+                      
+                        
+                      
+                        
+                      
+                        
+                      
+                        
+                      
+                        
+                      
+                    </div>
+                  </div>
+                
+             
+            </tbody>
+          </table>
+        </p>
+      
+    
+  
+    
+      
+          
+              
+                  
+                  
+                  
+                  
+                  
+                  
+
+                  
+              
+          
+      
+    
+  
+    
+      
+      
+      
+      
+        <p>
+        <b class="default_txt_clr">Quests</b><br>
+          <table width="95%" cellspacing="0" style="padding-left:10px; width:170px;">
+            <tbody>
+              
+                <div id="sidebar_quests" class="default_txt_clr" style="border:0px; width:170px; padding-left:10px;">
+                  <div style="overflow-x: hidden; max-height:230px;padding-right:10px">
+                    
+                      
+                        
+                          
+                        
+                      
+                        
+                          
+                        
+                      
+                        
+                          
+                        
+                      
+                        
+                          
+                        
+                      
+                        
+                          
+                        
+                      
+                        
+                          
+                        
+                      
+                        
+                          
+                            <a href="https://neopetsclassic.com/faerieland/employ/employment/" title="Faerie Employment Agency Jobs">
+                              <div class="daily_icn" style="display:inline-block; vertical-align:top; text-align:center;">
+                                <img src="https://neopetsclassic.com/static/images/misc/dailyicons/fae.0ee7ce36dd86.gif" style="width:30px;height:30px;object-fit:contain;padding:3px;">
+                                <br><span class="default_clk_txt">0/10</span>
+                              </div>
+                            </a>
+                          
+                        
+                      
+                        
+                      
+                        
+                      
+                        
+                          
+                        
+                      
+                    
+                  </div>
+                </div>
+              
+            </tbody>
+          </table>
+        </p>
+        
+      
+      
+    
+  
+    
+      
+        <p>
+        <a href="https://neopetsclassic.com/objects/" class="default_txt_clr">Shops</a>
+        
+          
+            <table width="95%" cellspacing="0" style="padding-left:10px; width:170px;">
+              <tbody>
+                
+                  <tr>
+                    <td colspan="2">
+                      <div id="sidebar_shops4" class="default_txt_clr" style="border:0px; width:170px">
+                        <div style="overflow-y: auto; overflow-x: hidden; max-height:116; padding-right:10px; -webkit-overflow-scrolling: touch;">
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=1">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/1.de3643be4bdc.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=12">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/12.1ddd2bbd74cd.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=21">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/21.8f6d97cfaf6c.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=18">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/18.ed6207a81cf7.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=32">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/32.23fad723968e.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=52">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/52.1869b60b006b.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=16">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/16.8d066368c573.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=5">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/5.2b20a6dceffc.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=4">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/4.ce210dd5987f.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=10">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/10.adce81717a60.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=11">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/11.ca20ffa057e9.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=2">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/2.9d602d893dbb.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=17">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/17.5f735b904829.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=19">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/19.4b0daa306496.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=33">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/33.7e6846918bba.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=6">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/6.bc4ff8d2a07f.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=30">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/30.d2a890dfb274.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=15">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/15.f2059cc0630f.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=39">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/39.682b15d7faef.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=14">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/14.7d408a5da8b6.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=9">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/9.4e145e06a57d.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=20">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/20.70d5593f6cf5.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=22">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/22.a28d8f51877b.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=38">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/38.45b138747348.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=77">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/77.0c2d1cf523d2.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=8">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/8.e0809f205515.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=60">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/60.19e19cdf049f.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=24">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/24.087fbb949829.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=42">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/42.235de88ca203.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=74">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/74.a9dd11ac2c11.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=73">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/73.ece8b8def852.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=76">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/76.7c92734185e6.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=80">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/80.fc545a50e8d1.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=67">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/67.f529a2b126d7.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=49">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/49.c8605c216284.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=45">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/45.4864d0e5e827.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=65">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/65.dddc38b20d06.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=53">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/53.dfa32f894c0e.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                            
+                              <a href="https://neopetsclassic.com/viewshop/?shop_id=420">
+                                
+                                
+                                    <img src="https://neopetsclassic.com/static/images/misc/shopicons/420.670f073b1cc0.png" style="width:35px;height:35px;object-fit:contain;padding-bottom:1px">
+                                
+                                
+                              </a>
+                            
+                          
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                
+              </tbody>
+            </table>
+          
+        
+        </p>
+      
+    
+  
+    
+      
+          <p></p>
+          
+            
+              <p>
+                <b class="default_txt_clr">Timers</b><br>
+                
+                  
+                    
+                  <p></p>
+                      <table cellspacing="0" cellpadding="3.5" style="padding-left:10px; width:170px">
+                        <tbody>
+                  <tr>
+                    <td colspan="2" style="text-align: center;">
+                      <span id="nst_clock" class="nst_clock rs_clock">
+                        <span id="rs_clock_minutes">05</span>:<span id="rs_clock_seconds">56</span> until next RS
+                      </span>
+                    </td>
+                  </tr>
+                  </tbody>
+                  </table>
+                  <p></p>
+                        
+                  
+                
+                  
+                    
+                            
+                                <table cellspacing="0" cellpadding="3.5" style="padding-left:10px; width:170px">
+                                    <tbody>
+                                        
+                                            
+                                                <tr>
+                                                    <td id="default_nav" colspan="2">
+                                                        
+                                                            <a href="https://neopetsclassic.com/games/kadoatery/">Kadoatery</a>
+                                                        
+                                                    </td>
+                                                    <td class="default_clk_txt" align="right">
+                                                        
+                                                            
+                                                                <font color='forestgreen'>00:00:00</font>
+                                                            
+                                                        
+                                                    </td>
+                                                </tr>
+                                            
+                                        
+                                            
+                                                <tr>
+                                                    <td id="default_nav" colspan="2">
+                                                        
+                                                            <a href="https://neopetsclassic.com/halloween/esophagor/">Esophagor</a>
+                                                        
+                                                    </td>
+                                                    <td class="default_clk_txt" align="right">
+                                                        
+                                                            <font color="forestgreen">00:00:00</font>
+                                                        
+                                                    </td>
+                                                </tr>
+                                            
+                                        
+                                            
+                                                <tr>
+                                                    <td id="default_nav" colspan="2">
+                                                        
+                                                            <a href="https://neopetsclassic.com/faerieland/springs/">Healing Springs</a>
+                                                        
+                                                    </td>
+                                                    <td class="default_clk_txt" align="right">
+                                                        
+                                                            <font color="forestgreen">00:00:00</font>
+                                                        
+                                                    </td>
+                                                </tr>
+                                            
+                                        
+                                            
+                                                <tr>
+                                                    <td id="default_nav" colspan="2">
+                                                        
+                                                            <a href="https://neopetsclassic.com/faerieland/wheel/">Excitement</a>
+                                                        
+                                                    </td>
+                                                    <td class="default_clk_txt" align="right">
+                                                        
+                                                            <font color="forestgreen">00:00:00</font>
+                                                        
+                                                    </td>
+                                                </tr>
+                                            
+                                        
+                                            
+                                                <tr>
+                                                    <td id="default_nav" colspan="2">
+                                                        
+                                                            <a href="https://neopetsclassic.com/pirates/buried_treasure/">Buried Treasure</a>
+                                                        
+                                                    </td>
+                                                    <td class="default_clk_txt" align="right">
+                                                        
+                                                            <font color="forestgreen">00:00:00</font>
+                                                        
+                                                    </td>
+                                                </tr>
+                                            
+                                        
+                                            
+                                                <tr>
+                                                    <td id="default_nav" colspan="2">
+                                                        
+                                                            <a href="https://neopetsclassic.com/halloween/strtest/">Strength Test</a>
+                                                        
+                                                    </td>
+                                                    <td class="default_clk_txt" align="right">
+                                                        
+                                                            <font color="forestgreen">00:00:00</font>
+                                                        
+                                                    </td>
+                                                </tr>
+                                            
+                                        
+                                            
+                                                <tr>
+                                                    <td id="default_nav" colspan="2">
+                                                        
+                                                            <a href="https://neopetsclassic.com/desert/shrine/">Coltzan's Shrine</a>
+                                                        
+                                                    </td>
+                                                    <td class="default_clk_txt" align="right">
+                                                        
+                                                            <font color="forestgreen">00:00:00</font>
+                                                        
+                                                    </td>
+                                                </tr>
+                                            
+                                        
+                                            
+                                                <tr>
+                                                    <td id="default_nav" colspan="2">
+                                                        
+                                                            <a href="https://neopetsclassic.com/medieval/earthfaerie/">Illusen</a> <span style="font-size: 7.5pt;">/</span> <a href="https://neopetsclassic.com/faerieland/darkfaerie/">Jhudora</a>
+                                                        
+                                                    </td>
+                                                    <td class="default_clk_txt" align="right">
+                                                        
+                                                            <font color="forestgreen">00:00:00</font>
+                                                        
+                                                    </td>
+                                                </tr>
+                                            
+                                        
+                                            
+                                        
+                                            
+                                        
+                                            
+                                                <tr>
+                                                    <td id="default_nav" colspan="2">
+                                                        
+                                                    </td>
+                                                    <td class="default_clk_txt" align="right">
+                                                        
+                                                    </td>
+                                                </tr>
+                                            
+                                        
+                                    </tbody>
+                                </table>
+                            
+                    
+                  
+                
+                  
+                    
+                      <table width="95%" cellspacing="0" cellpadding="3.5" style="padding-left:10px; width:170px">
+                        <tbody>
+                          <tr>
+                            
+                              
+                            
+                              
+                            
+                              
+                            
+                          </tr>
+                        </tbody>
+                      </table>
+                    
+                  
+                
+                  
+                    
+                      
+                      <p></p>
+                      <span class="nst_clock next_random_clock" id="nst_clock" style="width: 96.03px;">
+                        Next RE :
+                        
+                          
+                            <div id="next_random_clock_minutes" class="inner_timer">02</div>:<div id="next_random_clock_seconds" class="inner_timer">33</div>
+                          
+                        
+                      </span>
+                      <p></p>
+                    
+                  
+                
+              </p>
+            
+          
+        <p></p>
+      
+    
+  
+    
+      
+    
+    <p>
+    
+        <a href="https://neopetsclassic.com/quickref/" class="default_txt_clr">Pets</a>
+    
+    <table width="95%" cellspacing="0" style="padding-right:10px; width:170px;">
+        <tbody>
+            
+            
+            <tr>
+                <td colspan="2">
+                    <div id="sidebar_pets" class="default_txt_clr" style="border:0px; width:170px; padding-left:10px;">
+                        <div style="overflow-x: hidden; max-height:230px; padding-right:10px; display: flex; flex-wrap: wrap; justify-content: center;">
+                            
+                            
+                                
+                                    
+                                        <a href="https://neopetsclassic.com/setActivePet/?pet_name=Nine" title="Nine">
+                                            <div class="daily_icn" style="margin: 3px;">
+                                                <div style="width: 30px; height: 30px; border-radius: 50%; border: 2px solid black; overflow: hidden;">
+                                                    
+                                                        <img src="https://neopetsclassic.com/images/pets/Lutari/80by80/lutari_grey_happy.gif" alt="Nine" style="width: 100%; height: 100%; object-fit: cover;">
+                                                    
+                                                </div>
+                                            </div>
+                                        </a>
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                            
+                                
+                                    
+                                
+                                    
+                                        <a href="https://neopetsclassic.com/setActivePet/?pet_name=WARBOY" title="WARBOY">
+                                            <div class="daily_icn" style="margin: 3px;">
+                                                <div style="width: 30px; height: 30px; border-radius: 50%; border: 2px solid black; overflow: hidden;">
+                                                    
+                                                        <img src="https://neopetsclassic.com/images/pets/Kiko/80by80/kiko_angel_happy.gif" alt="WARBOY" style="width: 100%; height: 100%; object-fit: cover;">
+                                                    
+                                                </div>
+                                            </div>
+                                        </a>
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                            
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                        <a href="https://neopetsclassic.com/setActivePet/?pet_name=Insatiable" title="Insatiable">
+                                            <div class="daily_icn" style="margin: 3px;">
+                                                <div style="width: 30px; height: 30px; border-radius: 50%; border: 2px solid black; overflow: hidden;">
+                                                    
+                                                        <img src="https://neopetsclassic.com/images/pets/Skeith/80by80/skeith_ghost_happy.gif" alt="Insatiable" style="width: 100%; height: 100%; object-fit: cover;">
+                                                    
+                                                </div>
+                                            </div>
+                                        </a>
+                                    
+                                
+                                    
+                                
+                            
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                        <a href="https://neopetsclassic.com/setActivePet/?pet_name=HAW" title="HAW">
+                                            <div class="daily_icn" style="margin: 3px;">
+                                                <div style="width: 30px; height: 30px; border-radius: 50%; border: 2px solid black; overflow: hidden;">
+                                                    
+                                                        <img src="https://neopetsclassic.com/images/pets/Chia/80by80/chia_grey_happy.gif" alt="HAW" style="width: 100%; height: 100%; object-fit: cover;">
+                                                    
+                                                </div>
+                                            </div>
+                                        </a>
+                                    
+                                
+                            
+                            
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            
+        </tbody>
+    </table>
+    </p>
+
+    
+  
+    
+  
+    
+      
+      
+      
+      
+      
+      
+      
+          <p>
+            
+              <b class="default_txt_clr">Fishing</b><br>
+            
+            <table width="95%" cellspacing="0" style="padding-left:10px; width:170px;padding-top:5px;">
+              <tbody>
+                  <div id="sidebar_fishing" class="default_txt_clr" style="border:0px; width:170px; padding-left:10px;">
+                    <div id="default_am_txt" style="overflow-x: hidden; padding-right:10px;">
+                      
+                        
+                          
+                          
+                            <tr>
+                              <td>
+                                <font size="-2" id="default_am_txt" style="display: flex; justify-content: space-between;">
+                                  <span><b>Stigmata</b></span>
+                                  <span>(500)</span>
+                                </font>
+                              </td>
+                              <td align="right">
+                                <font size="-2">
+                                  <a href="https://neopetsclassic.com/water/fishing/?pet=Stigmata" class="default_txt_clr" style="font-size: 7pt; color: forestgreen;">
+                                    Fish now!
+                                  </a>
+                                </font>
+                              </td>
+                            </tr>
+                          
+                        
+                          
+                          
+                            <tr>
+                              <td>
+                                <font size="-2" id="default_am_txt" style="display: flex; justify-content: space-between;">
+                                  <span><b>Hatter</b></span>
+                                  <span>(500)</span>
+                                </font>
+                              </td>
+                              <td align="right">
+                                <font size="-2">
+                                  <a href="https://neopetsclassic.com/water/fishing/?pet=Hatter" class="default_txt_clr" style="font-size: 7pt; color: forestgreen;">
+                                    Fish now!
+                                  </a>
+                                </font>
+                              </td>
+                            </tr>
+                          
+                        
+                          
+                          
+                            <tr>
+                              <td>
+                                <font size="-2" id="default_am_txt" style="display: flex; justify-content: space-between;">
+                                  <span><b>Vorpal</b></span>
+                                  <span>(382)</span>
+                                </font>
+                              </td>
+                              <td align="right">
+                                <font size="-2">
+                                  <a href="https://neopetsclassic.com/water/fishing/?pet=Vorpal" class="default_txt_clr" style="font-size: 7pt; color: forestgreen;">
+                                    Fish now!
+                                  </a>
+                                </font>
+                              </td>
+                            </tr>
+                          
+                        
+                          
+                          
+                            <tr>
+                              <td>
+                                <font size="-2" id="default_am_txt" style="display: flex; justify-content: space-between;">
+                                  <span><b>Psychotic</b></span>
+                                  <span>(362)</span>
+                                </font>
+                              </td>
+                              <td align="right">
+                                <font size="-2">
+                                  <a href="https://neopetsclassic.com/water/fishing/?pet=Psychotic" class="default_txt_clr" style="font-size: 7pt; color: forestgreen;">
+                                    Fish now!
+                                  </a>
+                                </font>
+                              </td>
+                            </tr>
+                          
+                        
+                      
+                    </div>
+                  </div>
+              </tbody>
+            </table>
+          </p>
+        
+      
+      
+      
+    
+  
+    
+      
+        
+        
+        
+        <style>
+        .neogarden-section {
+          margin-bottom: 1em;
+          margin-top: 1em;
+        }
+        </style>
+        <div class="neogarden-section">
+          
+            
+                <div style="padding-bottom:10px;">
+                  <a href="https://neopetsclassic.com/medieval/index_farm/gardens/" class="default_txt_clr">NeoGarden</a>
+                </div>
+            
+          
+            
+            
+            
+            
+            
+            
+            <div id="center" class="sidebar_garden_plots" style="padding-top:2px">
+            
+                
+                  
+                  
+                  
+                  <span id="default_am_txt" style="font-size: 7.5pt;">
+                  
+                    <a href="https://neopetsclassic.com/medieval/index_farm/gardens/">Plant a seed!</a>
+                  </span>
+                  
+                
+            
+          </div>
+        </div>
+        
+    
+    
+  
+    
+      
+        <p>
+        <a href="https://neopetsclassic.com/random-events/" class="default_txt_clr">Random Events</a><br>
+        <table cellspacing="0" cellpadding="3.5" style="padding-left:10px; width:170px">
+          <tbody>
+            
+            
+              <tr>
+                <td id="default_am_txt" colspan="3" style="text-align: center;">
+                  <span style="font-size: 7.5pt;"><b>Last event:</b> [2026-08-29 19:49:08]</b> Congratulations, <b>9SCARECROWS</b>, you just found 500 Neopoints on the floor!!!
+</span>
+                  
+                </td>
+              </tr>
+            
+          </tbody>
+        </table>
+        </p>
+      
+    
+  
+
+    </div>
+    <div class="sidebar-section se"></div>
+    <div class="sidebar-section sm-filler"></div>
+  </div>
+</td>
+  
+
+</table>
+
+<table border="0" width="700">
+  <tbody>
+    <tr>
+      <td width="140">&nbsp;</td>
+      <td align="center">
+        <br clear="all">
+        <p class="footerText">
+          <font class="sf" color="#666666">
+            Neopets Classic is a fan recreation and is not affiliated with Neopets, Inc.
+            <br>
+            NEOPETS, characters, logos, names and all related indicia
+            <br>
+            are trademarks of 
+            Neopets, Inc., &copy; 1999-2026. All rights reserved.
+          </font>
+          <br>
+          <a href="https://neopetsclassic.com/privacy/" class="sf">Privacy Policy</a> | 
+          <a href="https://neopetsclassic.com/safetytips/" class="sf">Safety Tips</a> | 
+          <a href="https://neopetsclassic.com/help/tickets/create_ticket/" class="sf">Contact Us</a> | 
+          <a href="https://neopetsclassic.com/help/about_us/" class="sf">About Us</a>
+          
+          <br>
+          <font class="sf">
+            Use of this site signifies your acceptance of the 
+            <a href="https://neopetsclassic.com/help/rules/" class="sf">Terms and Conditions</a>
+          </font>
+          <br clear="all">
+        </p>
+      </td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+    </tr>
+  </tbody>
+</table>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v3d52b47920f24c319d37e2661827c42b1787588026925" integrity="sha512-d9sL6GJLXn6fInD1+TVXhTcQOsmxeHfmHAvwGDIxp5TO+uo1fiWW7mHomMj4MLRlCsJDTqXzWLHJFFlPCEIj/A==" data-cf-beacon='{"version":"2024.11.0","token":"22b857937c9a4a9386af45955db835a1","r":1}' crossorigin="anonymous"></script>
+</body>
